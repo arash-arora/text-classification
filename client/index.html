@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ML Model</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1 class="title">ML MODEL COMPARISON</h1>
+    <form id="form" class="form">
+      <textarea
+        rows="5"
+        placeholder="Enter text..."
+        name="text"
+        required
+      ></textarea>
+      <select name="model">
+        <option value="svm">SVM</option>
+        <option value="lr">Linear Regression</option>
+      </select>
+      <button>Submit</button>
+    </form>
+    <section id="container"></section>
+    <script>
+      form = document.getElementById("form");
+      container = document.getElementById("container");
+      let data;
+      async function fetchData(model, text) {
+        container.innerHTML = "";
+        console.log(model, text);
+        const response = await fetch(
+          `http://localhost:5000/api?model=${model}&text=${text}`
+        );
+        data = await response.json();
+        console.log(data);
+        h3 = document.createElement("h3");
+        p = document.createElement("p");
+        div = document.createElement("div");
+        h3.innerText = "Label: " + data.label;
+        h3.classList.add("label");
+        p.innerText =
+          "Accuracy: " + parseFloat(data.accuracy * 100).toFixed(2) + "%";
+        p.classList.add("acc");
+        container.appendChild(h3);
+        container.appendChild(p);
+      }
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await fetchData(e.target.model.value, e.target.text.value);
+      });
+    </script>
+  </body>
+</html>
